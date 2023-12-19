@@ -205,6 +205,7 @@ button:hover {
     opacity: 0;
     animation: slideLeft .5s ease forwards;
     animation-delay: calc(.05s * var(--i));
+    transition: .2s ease;
 }
 
 

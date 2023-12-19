@@ -21,7 +21,7 @@ function possible(board, y, x, n) {
 
 function solvesudoku(board) {
     const solutions = [];
-    
+
     function backtrack(board, y, x) {
         if (y === 9) {
             solutions.push(JSON.parse(JSON.stringify(board)));
@@ -57,19 +57,9 @@ function solvesudoku(board) {
     return solutions;
 }
 
-
-
-
-
-
-
-
-
-
 // sudoku problem generator program ____
 //                                     |
 //                                    \/
-
 
 function shuffle(arr) {
     for (let i = arr.length - 1; i > 0; i--) {
@@ -178,27 +168,20 @@ for (var i = 1; i <= 81; i++) {
         }
         z2 = false;
     }
-    document.getElementById("main").innerHTML = document.getElementById("main").innerHTML + `<input type="number" value="" id="${i}" class="input" oninput="this.value = this.value.slice(-1)" onkeydown="disablearrow(event)" style="--i:${z}" readonly="true">`;
+    variable.push(z);
+    document.getElementById("main").innerHTML = document.getElementById("main").innerHTML + `<input type="number" value="" id="${i}" class="input" oninput="this.value = this.value.slice(-1); checkInputValidity()" style="--i:${z}" readonly="true">`;
 }
 
 
-
-for (let i=1; i<=81; i++){
+// adding margin to create 3x3 grid effect
+for (let i = 1; i <= 81; i++) {
     let x = document.getElementById(i.toString());
-    if (i%9 == 3 || i%9 == 6){
+    if (i % 9 == 3 || i % 9 == 6) {
         x.style.marginRight = ".4rem";
     }
-    if ((i>=19 && i<=27) || (i>=46 && i<=54)){
+    if ((i >= 19 && i <= 27) || (i >= 46 && i <= 54)) {
         x.style.marginBottom = ".6rem";
     }
-}
-
-
-
-//how to play game instruction
-
-function help() {
-    window.open("https://sudoku.com/how-to-play/sudoku-rules-for-complete-beginners/", "_blank");
 }
 
 const timer = () => {
@@ -213,15 +196,15 @@ const timer = () => {
 
         let inmin = document.getElementById("time_min");
         let insec = document.getElementById("time_sec");
-        
+
         inmin.innerHTML = (min < 10 ? "0" + min : min);
         insec.innerHTML = (sec < 10 ? "0" + sec : sec);
 
-        if (min >= 2 && (sec == 10 || sec == 20 || sec == 30 || sec == 40 || sec == 50 || sec == 59)){
-            if(score > 0){
+        if (min >= 2 && (sec == 10 || sec == 20 || sec == 30 || sec == 40 || sec == 50 || sec == 59)) {
+            if (score > 0) {
                 score -= 2;
                 document.getElementById("score").innerHTML = (score < 10 ? "0" + score : score);
-                if (score <= 20){
+                if (score <= 20) {
                     document.getElementById("score").style.color = "red"
                 }
             }
@@ -238,6 +221,71 @@ var id;
 var timeid;
 var score = 100;
 document.getElementById("score").innerHTML = score;
+
+const checkValidity = (board, row, col, num) => {
+    // Check the row
+    for (let i = 0; i < 9; i++) {
+        if (board[row][i] === num && i !== col) {
+            return false;
+        }
+    }
+
+    // Check the column
+    for (let i = 0; i < 9; i++) {
+        if (board[i][col] === num && i !== row) {
+            return false;
+        }
+    }
+
+    // Check the 3x3 box
+    const boxRow = Math.floor(row / 3) * 3;
+    const boxCol = Math.floor(col / 3) * 3;
+    for (let i = boxRow; i < boxRow + 3; i++) {
+        for (let j = boxCol; j < boxCol + 3; j++) {
+            if (board[i][j] === num && (i !== row || j !== col)) {
+                return false;
+            }
+        }
+    }
+
+    return true;
+};
+
+
+const checkInputValidity = () => {
+
+    const userBoard = Array(9).fill().map(() => Array(9).fill(0));
+    let count = 1;
+
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            const elem = document.getElementById(count.toString());
+            if (elem) {
+                userBoard[i][j] = elem.value;
+            }
+            else {
+                userBoard[i][j] = 0;
+            }
+            count += 1;
+        }
+    }
+
+    count = 1;
+
+    for (let i = 0; i < 9; i++) {
+        for (let j = 0; j < 9; j++) {
+            const elem = document.getElementById(count.toString());
+            if (!elem.readOnly && !checkValidity(userBoard, i, j, userBoard[i][j])) {
+                elem.style.color = "red";
+            }
+            else {
+                elem.style.color = "white";
+            }
+            count += 1;
+        }
+    }
+
+}
 
 // checksudoku function
 const checksudoku = () => {
@@ -260,33 +308,33 @@ const checksudoku = () => {
             let value = document.getElementById(x.toString()).value;
             usersolution[i][j] = Number.parseInt(value);
 
-            if (isNaN(usersolution[i][j])){
+            if (isNaN(usersolution[i][j])) {
                 possible = false;
                 break;
             }
             x += 1;
         }
-        if(!possible){
+        if (!possible) {
             break;
         }
     }
 
-    if(possible){
+    if (possible) {
 
-        for (x=0; x < solution.length; x++){
+        for (x = 0; x < solution.length; x++) {
             let yes = true;
             ans = solution[x];
-    
+
             for (let i = 0; i < 9; i++) {
                 for (let j = 0; j < 9; j++) {
                     if (ans[i][j] != usersolution[i][j]) {
                         yes = false;
-                        
+
                     }
                 }
             }
-    
-            if(yes == true ){
+
+            if (yes == true) {
                 return true;
             }
         }
@@ -339,30 +387,30 @@ const interval = () => {
                 clearInterval(id);
                 let currentscore = Number.parseInt(document.getElementById("score").innerHTML);
 
-                try{
+                try {
                     let name = localStorage.getItem("name");
                     let score = Number.parseInt(localStorage.getItem("score"));
 
 
-                    if (isNaN(score)){
+                    if (isNaN(score)) {
                         throw "not a number";
                     }
                     else {
-                        if (score < currentscore){
+                        if (score < currentscore) {
                             alert(`congractulations, you beats the high score !!.....\nyour score = ${currentscore}\nhigh score = ${score}\n\nyour name = ${name}`);
-                            localStorage.setItem("score",currentscore);
+                            localStorage.setItem("score", currentscore);
                         }
-                        else{
+                        else {
                             alert(`congractulation you win!....\nyour score = ${currentscore}\nhigh score = ${score}\n\nyour name = ${name}`);
                         }
                     }
-                    
-                }catch(err) {
+
+                } catch (err) {
                     console.log("no user found in local storage");
                     let name = prompt(`congractulation you win!....\nyour score = ${currentscore}\n\nEnter your name: `);
-                    
-                    localStorage.setItem("name",name);
-                    localStorage.setItem("score",currentscore);
+
+                    localStorage.setItem("name", name);
+                    localStorage.setItem("score", currentscore);
                 }
 
                 window.location.reload();
@@ -425,13 +473,6 @@ function start() {
 }
 
 
-
-
-
-
-
-
-
 function replay() {
     clearInterval(timeid);
     clearInterval(id);
@@ -443,10 +484,58 @@ function replay() {
     start();
 }
 
-const disablearrow = (event) => {
-    const element = event.target;
-    if (element.tagName === 'INPUT' && element.type === 'number' &&
-        (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+// const MoveFocus = (event) => {
+//     const element = event.target;
+//     let id = element.id;
+//     if (element.tagName === 'INPUT' && element.type === 'number' && (event.key === 'ArrowUp' || event.key === 'ArrowDown')) {
+//         event.preventDefault();
+//     }
+//     if (element.tagName === 'INPUT' && element.type === 'number') {
+//         if (event.key === 'ArrowUp') {
+//             document.getElementById(id - 9).focus();
+//         }
+//         else if (event.key === 'ArrowDown') {
+//             document.getElementById(id + 9).focus();
+//         }
+//         else if (event.key === 'ArrowLeft') {
+//             document.getElementById(id - 1).focus();
+//         }
+//         else if (event.key === 'ArrowRight') {
+//             document.getElementById(id + 1).focus();
+//         }
+//     }
+// }
+
+function moveFocusByArrowKey(event) {
+    if (event.target.tagName === 'INPUT' && event.target.type === 'number' && event.key.startsWith('Arrow')) {
+
         event.preventDefault();
+        const currentElement = document.activeElement;
+        const cellNumber = parseInt(currentElement.id);
+        let newCellNumber;
+
+        switch (event.key) {
+            case 'ArrowUp':
+                newCellNumber = Math.max(1, cellNumber - 9);
+                break;
+            case 'ArrowDown':
+                newCellNumber = Math.min(81, cellNumber + 9);
+                break;
+            case 'ArrowLeft':
+                newCellNumber = Math.max(1, cellNumber - 1);
+                break;
+            case 'ArrowRight':
+                newCellNumber = Math.min(81, cellNumber + 1);
+                break;
+            default:
+                return;
+        }
+
+        const newElement = document.getElementById(`${newCellNumber}`);
+        if (newElement) {
+            newElement.focus();
+        }
     }
 }
+
+document.addEventListener('keydown', moveFocusByArrowKey);
